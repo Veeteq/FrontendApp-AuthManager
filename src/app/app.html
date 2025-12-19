@@ -1,6 +1,9 @@
-<div class="bg-gray-50 text-gray-900 font-sans">
-      <h3 class="text-xl font-bold underline">Hello, {{ title() }}</h3>
-      <p>Congratulations! Your app is running. 🎉</p>
-</div>
+<nav class="bg-slate-800 text-white p-4 flex gap-6 shadow-md">
+  <a routerLink="/" class="hover:text-blue-400 transition-colors" routerLinkActive="text-blue-400 border-b-1 border-blue-400" #rla="routerLinkActive"  [routerLinkActiveOptions]="{exact: true}">Home</a>
+  <a routerLink="/user/login" class="hover:text-blue-400 transition-colors" routerLinkActive="text-blue-400 border-b-1 border-blue-400" #rla="routerLinkActive">Login</a>
+  <a routerLink="/user/register" class="hover:text-blue-400 transition-colors" routerLinkActive="text-blue-400 border-b-1 border-blue-400" #rla="routerLinkActive">Register</a>
+</nav>
 
-<router-outlet> </router-outlet>
+<main class="container mx-auto p-6">
+  <router-outlet></router-outlet>
+</main>
