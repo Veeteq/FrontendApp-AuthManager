@@ -1,59 +1,38 @@
 # AddressBookManagement3
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Konfiguracja połączenia z API (zastąpienie Fake Backend)
+    ◦ a. Rezygnacja z fake-backend.ts na rzecz rzeczywistego API w Spring Boot.
+    ◦ b. Rozwiązanie problemów z CORS po stronie backendu, aby umożliwić komunikację z portem 4201
+2. Tworzenie pliku środowiskowego (Angular Environment File)
+    ◦ a. Tworzenie folderu src/environments i pliku environment.ts.
+    ◦ b. Definiowanie apiUrl wskazującego na Twój serwer Spring Boot.
+3. Tworzenie modelu użytkownika (User Model)
+    ◦ a. Tworzenie pliku user.ts w folderze src/app/_models.
+    ◦ b. Definicja klasy User z polami takimi jak id, username, firstName, lastName oraz token.
+4. Aktualizacja konfiguracji TypeScript (TS Config)
+    ◦ a. Dodanie aliasów ścieżek (@app/*, @environments/*) w tsconfig.json dla czystszych importów.
+    ◦ b. Wyłączenie reguły noPropertyAccessFromIndexSignature, co ułatwia dostęp do pól formularza.
+5. Tworzenie serwisu użytkownika (Account/User Service)
+    ◦ a. Tworzenie user.service.ts obsługującego logikę RxJS BehaviorSubject do przechowywania stanu zalogowania.
+    ◦ b. Implementacja metod login() (zapis w localStorage) oraz logout() (czyszczenie sesji).
+6. Konfiguracja HttpClient i Reactive Forms
+    ◦ a. Rejestracja provideHttpClient() w pliku app.config.ts (podejście Standalone)
+    ◦ b. Import ReactiveFormsModule bezpośrednio w komponencie logowania dla obsługi formularzy.
+7. Logika komponentu logowania (Login Logic)
+    ◦ a. Implementacja login.ts z wykorzystaniem FormBuilder do walidacji pól username i password.
+    ◦ b. Dodanie mechanizmu automatycznego ustawiania focusa na polu username przy użyciu @ViewChild 
+8. Szablon formularza logowania (Login HTML)
+    ◦ a. Tworzenie login.html z wykorzystaniem Tailwind CSS (zamiast Bootstrapa ze źródeł).
+    ◦ b. Implementacja komunikatów o błędach i obsługi stanu ładowania (loading).
+9. Aktualizacja głównego komponentu aplikacji (App Component)
+    ◦ a. Subskrypcja stanu użytkownika w app.ts, aby dynamicznie reagować na zalogowanie/wylogowanie.
+    ◦ b. Implementacja nowoczesnej nawigacji w app.html przy użyciu składni @if (Angular 17+) zamiast *ngIf
+10. Tworzenie Strażnika Tras (Route Guard)
+    ◦ a. Tworzenie auth.guard.ts w celu ochrony prywatnych tras przed niezalogowanymi użytkownikami.
+    ◦ b. Zabezpieczenie trasy głównej (Home) w app.routes.ts za pomocą canActivate.
+11. Tworzenie JWT Interceptor
+    ◦ a. Implementacja funkcyjnego jwt.interceptor.ts, który automatycznie dodaje token Bearer do nagłówków żądań HTTP.
+    ◦ b. Rejestracja interceptora w app.config.ts za pomocą withInterceptors()
+12. Tworzenie Error Interceptor
+    ◦ a. Implementacja funkcyjnego error.interceptor.ts do przechwytywania błędów 401 i 403.
+    ◦ b. Dodanie automatycznego wylogowania w przypadku wygaśnięcia tokena JWT.

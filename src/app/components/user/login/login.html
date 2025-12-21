@@ -1,5 +1,38 @@
-<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-  <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Panel Logowania</h1>
-  <!-- Tu w przyszłych lekcjach dodamy formularz -->
-  <p class="text-sm text-gray-500 text-center">Zaloguj się, aby uzyskać dostęp.</p>
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+    <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Login to your account</h2>
+  </div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+      @if (error) {
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">{{error}}</div>
+      }
+
+      <div>
+        <label class="block text-sm font-medium leading-6 text-gray-900">Username</label>
+        <input type="text" formControlName="username" placeholder="Username" #usernameInput
+               class="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
+               [ngClass]="{ 'ring-red-500': submitted && f.username.errors }">
+        <div *ngIf="submitted && f.username.errors?.required" class="mt-1 text-xs text-red-500 italic">Required</div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+        <input type="password" formControlName="password" placeholder="Password"
+               class="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
+               [ngClass]="{ 'ring-red-500': submitted && f.password.errors }">
+        @if (submitted && f.password.errors?.required) {
+          <div class="mt-1 text-xs text-red-500 italic">Required</div>
+        }
+      </div>
+
+      <button [disabled]="loading" class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50">
+        @if (loading) {
+          <span class="animate-spin mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+        }        
+        Login
+      </button>
+    </form>
+  </div>
 </div>
