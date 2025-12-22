@@ -44,3 +44,9 @@
 2. Logika komponentu rejestracji (RegisterComponent)
 3. Szablon komponentu rejestracji (register.html)
 4. Aktualizacja LoginComponent (Success Alert)
+
+## CR-004: Alert Service
+1. Tworzenie Alert Service (alert.service.ts)
+2. Tworzenie Alert Component (alert.component.ts)
+3. Refaktoryzacja komponentów Login i Register
+4. Aktualizacja Home Page (home.component.ts)

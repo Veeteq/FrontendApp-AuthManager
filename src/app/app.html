@@ -29,8 +29,7 @@
     @if (user) {
       <div class="flex items-center gap-4">
         <span class="text-slate-400 text-sm">Welcome, {{user.firstName}}!</span>
-        <button (click)="logout()" 
-                class="hover:text-red-400 transition-colors font-medium">
+        <button (click)="logout()" class="hover:text-red-400 transition-colors font-medium">
           Logout
         </button>
       </div>
@@ -40,5 +39,6 @@
 
 <!-- Główny kontener aplikacji -->
 <main class="max-w-7xl mx-auto mt-8 px-4">
+  <app-alert></app-alert>
   <router-outlet></router-outlet>
 </main>

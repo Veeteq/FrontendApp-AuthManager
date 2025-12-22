@@ -3,6 +3,7 @@ import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { User } from './model/user';
 import { AuthService } from './_service/auth.service';
+import { Alert } from "./components/alert/alert";
 
 @Component({
   standalone: true,
@@ -11,8 +12,9 @@ import { AuthService } from './_service/auth.service';
     CommonModule,
     RouterOutlet,
     RouterLink,
-    RouterLinkActive
-  ],
+    RouterLinkActive,
+    Alert
+],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -27,6 +29,7 @@ export class App {
 
   logout(): void {
     // Call the service to clear local storage and redirect to login page
+    console.log('logout');
     this.authService.logout();
   }
 

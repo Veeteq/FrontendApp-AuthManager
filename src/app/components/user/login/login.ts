@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertService } from '@app/_service/alert.service';
 import { AuthService } from '@app/_service/auth.service';
 import { first } from 'rxjs';
 
@@ -19,14 +20,13 @@ export class Login implements OnInit, AfterViewInit {
   form!: FormGroup;
   loading = false;
   submitted = false;
-  error?: string;
-  success?: string;
 
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertService: AlertService
   ) {
     if (this.authService.userValue) {
       this.router.navigate(['/']);
@@ -38,11 +38,6 @@ export class Login implements OnInit, AfterViewInit {
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
-
-    // Check for "registered" query parameter to show success message
-    if (this.route.snapshot.queryParams['registered']) {
-      this.success = 'Registration successful';
-    }
   }
 
   // Lifecycle hook that runs after the component's view has been initialized
@@ -57,9 +52,11 @@ export class Login implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.submitted = true;
-    this.error = '';
-    this.success = '';
 
+    // reset alerts on submit
+    this.alertService.clear();
+
+    // stop here if form is invalid
     if (this.form.invalid) {
       return;
     }
@@ -75,8 +72,8 @@ export class Login implements OnInit, AfterViewInit {
           this.router.navigateByUrl(returnUrl);
         },
         error: (err) => {
+          this.alertService.error(err.error.message);
           this.loading = false;
-          this.error = err;
         },
       });
   }

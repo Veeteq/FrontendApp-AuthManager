@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AlertService } from '@app/_service/alert.service';
 import { AuthService } from '@app/_service/auth.service';
 import { first } from 'rxjs';
 
@@ -14,16 +15,16 @@ import { first } from 'rxjs';
 export class Register implements OnInit, AfterViewInit {
   // Reference to the username input element in the template
   @ViewChild('firstnameInput') firstnameInput!: ElementRef;
-  
+
   form!: FormGroup;
   loading = false;
   submitted = false;
-  error?: string;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private alertService: AlertService
   ) {
     if (this.authService.userValue) {
       this.router.navigate(['/']);
@@ -52,7 +53,9 @@ export class Register implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.submitted = true;
-    this.error = '';
+
+    // reset alert on submit
+    this.alertService.clear();
 
     // stop here if form is invalid
     if (this.form.invalid) {
@@ -60,17 +63,18 @@ export class Register implements OnInit, AfterViewInit {
     }
 
     this.loading = true;
-    this.authService.register(this.form.value)
-    .pipe(first())
-    .subscribe({
-      next: () => {
-        this.router.navigate(['/user/login'], { queryParams: { registered: true }});
-      },
-      error: err => {
-        this.error = err.error.message;
-        this.loading = false;
-      }
-  });
+    this.authService
+      .register(this.form.value)
+      .pipe(first())
+      .subscribe({
+        next: () => {
+          this.alertService.success('Registration successful', true);
+          this.router.navigate(['/user/login'], { queryParams: { registered: true } });
+        },
+        error: (err) => {
+          this.alertService.error(err.error.message);
+          this.loading = false;
+        }
+      });
   }
-
 }

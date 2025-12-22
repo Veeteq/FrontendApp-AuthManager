@@ -3,13 +3,8 @@
     <h2 class="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create an account</h2>
   </div>
 
-  <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
+  <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
-      
-      @if (error) {
-        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">{{error}}</div>
-      }
-
       <div>
         <label class="block text-sm font-medium text-gray-900">First Name</label>
         <input type="text" formControlName="firstName" #firstnameInput

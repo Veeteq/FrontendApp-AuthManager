@@ -37,7 +37,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('user');
     this.userSubject.next(null);
-    this.router.navigate(['/account/login']);
+    this.router.navigate(['/user/login']);
   }
 
   // New register method sending data to Spring Boot
