@@ -50,3 +50,9 @@
 2. Tworzenie Alert Component (alert.component.ts)
 3. Refaktoryzacja komponentów Login i Register
 4. Aktualizacja Home Page (home.component.ts)
+
+## CR-005: User Management (CRUD)
+1. Rozbudowa AccountService o metody CRUD
+2. Tworzenie Listy Użytkowników (ListComponent)
+3. Tworzenie Formularza Dodawania i Edycji (AddEditComponent)
+4. Konfiguracja Routingu (Lazy Loading)

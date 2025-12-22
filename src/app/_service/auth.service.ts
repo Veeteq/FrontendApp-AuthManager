@@ -45,4 +45,36 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/users`, user);
   }
 
+  getAll() : Observable<User[]> {
+    return this.http.get<User[]>(`${environment.apiUrl}/users`);
+  }
+
+  getById(id: number) : Observable<User> {
+    return this.http.get<User>(`${environment.apiUrl}/users/${id}`);
+  }
+
+  update(id: number, params: any) : Observable<User> {
+    return this.http.put(`${environment.apiUrl}/users/${id}`, params).pipe(
+      map((user) => {
+        //Update local storage if the logged in user updated their own record
+        if (id === this.userValue?.id) {
+          const updatedUser = { ...this.userValue, ...params };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          this.userSubject.next(updatedUser);
+        }
+        return user;
+      })
+    );
+  }
+
+  delete(id: number) {
+    return this.http.delete(`${environment.apiUrl}/users/${id}`)
+    .pipe(map((user) => {
+        // Auto logout if the logged-in user deleted their own record [4]
+        if (id == this.userValue?.id) {
+          this.logout();
+        }
+      })
+    );
+  }
 }

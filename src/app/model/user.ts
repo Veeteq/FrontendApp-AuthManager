@@ -1,7 +1,9 @@
 export interface User {
-    id?: string;
+    id?: number;
     username?: string;
     firstName?: string;
     lastName?: string;
     token?: string;
+
+    isDeleting?: boolean;
 }
