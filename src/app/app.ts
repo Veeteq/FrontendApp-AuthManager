@@ -20,11 +20,11 @@ import { Alert } from "./components/alert/alert";
 })
 export class App {
   protected readonly title = signal('AddressBookManagement3');
-  user?: User | null;
+  user = signal<User | null>(null);
 
   constructor(private authService: AuthService) {
     // Subscribe to user state to dynamically update the UI
-    this.authService.user.subscribe(x => this.user = x);
+    this.user = this.authService.user;
   }
 
   logout(): void {

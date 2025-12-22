@@ -15,17 +15,17 @@ import { first } from 'rxjs';
   styleUrl: './list.css',
 })
 export class List implements OnInit {
-  users = signal<User[] | null>(null);  
+  users = signal<User[] | null>(null);
 
   constructor(private authService: AuthService, private alertService: AlertService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.authService.getAll()
     .pipe(first())
     .subscribe({
-      next: (data) => this.users.set(data),      
-      error: (err) => console.log(err)
-    });    
+      next: (data) => this.users.set(data),
+      error: (err) => console.log(err),
+    });
   }
 
   deleteUser(id: number): void {
@@ -35,7 +35,7 @@ export class List implements OnInit {
     this.authService.delete(id)
     .pipe(first())
     .subscribe(() => {
-      this.alertService.success('User deleted', true);      
+      this.alertService.success('User deleted', true);
       this.users.set(currentUsers.filter(x => x.id !== id));
     });
   }

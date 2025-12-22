@@ -56,3 +56,8 @@
 2. Tworzenie Listy Użytkowników (ListComponent)
 3. Tworzenie Formularza Dodawania i Edycji (AddEditComponent)
 4. Konfiguracja Routingu (Lazy Loading)
+
+## CR-006: Code refactoring to use signals
+1. Migrate to signals
+1. Przejście na Standalone Components
+2. Funkcyjne Interceptory i Strażnicy (Guards)
