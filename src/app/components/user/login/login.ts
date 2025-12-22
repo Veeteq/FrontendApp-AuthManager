@@ -12,7 +12,7 @@ import { first } from 'rxjs';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login implements OnInit, AfterViewInit  {
+export class Login implements OnInit, AfterViewInit {
   // Reference to the username input element in the template
   @ViewChild('usernameInput') usernameInput!: ElementRef;
 
@@ -20,39 +20,53 @@ export class Login implements OnInit, AfterViewInit  {
   loading = false;
   submitted = false;
   error?: string;
+  success?: string;
 
-  constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authService: AuthService) {
-        if (this.authService.userValue) {
-            this.router.navigate(['/']);
-        }
+  constructor(
+    private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService
+  ) {
+    if (this.authService.userValue) {
+      this.router.navigate(['/']);
+    }
   }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-            username: ['', Validators.required],
-            password: ['', Validators.required]
-        });
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+    });
 
+    // Check for "registered" query parameter to show success message
+    if (this.route.snapshot.queryParams['registered']) {
+      this.success = 'Registration successful';
+    }
   }
 
- // Lifecycle hook that runs after the component's view has been initialized
+  // Lifecycle hook that runs after the component's view has been initialized
   ngAfterViewInit() {
     // Set focus to the username input automatically
     this.usernameInput.nativeElement.focus();
   }
 
-  get f() { return this.form.controls; }
+  get f() {
+    return this.form.controls;
+  }
 
   onSubmit(): void {
     this.submitted = true;
     this.error = '';
+    this.success = '';
 
     if (this.form.invalid) {
-        return;
+      return;
     }
 
     this.loading = true;
-    this.authService.login(this.f.username.value, this.f.password.value)
+    this.authService
+      .login(this.f.username.value, this.f.password.value)
       .pipe(first())
       .subscribe({
         next: (user) => {
@@ -62,9 +76,8 @@ export class Login implements OnInit, AfterViewInit  {
         },
         error: (err) => {
           this.loading = false;
-          this.error = err
-        }
+          this.error = err;
+        },
       });
   }
-
 }

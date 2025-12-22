@@ -1,5 +1,7 @@
 # AddressBookManagement3
 
+## CR-002: User Login and Backend Integration
+
 1. Konfiguracja połączenia z API (zastąpienie Fake Backend)
     ◦ a. Rezygnacja z fake-backend.ts na rzecz rzeczywistego API w Spring Boot.
     ◦ b. Rozwiązanie problemów z CORS po stronie backendu, aby umożliwić komunikację z portem 4201
@@ -36,3 +38,9 @@
 12. Tworzenie Error Interceptor
     ◦ a. Implementacja funkcyjnego error.interceptor.ts do przechwytywania błędów 401 i 403.
     ◦ b. Dodanie automatycznego wylogowania w przypadku wygaśnięcia tokena JWT.
+
+## CR-003: User Registration
+1. Dodanie metody rejestracji do UserService
+2. Logika komponentu rejestracji (RegisterComponent)
+3. Szablon komponentu rejestracji (register.html)
+4. Aktualizacja LoginComponent (Success Alert)

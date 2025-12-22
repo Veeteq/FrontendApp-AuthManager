@@ -1,5 +1,65 @@
-<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-  <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Panel Rejestracji</h1>
-  <!-- Tu w przyszłych lekcjach dodamy formularz -->
-  <p class="text-sm text-gray-500 text-center">Zarejestruj się, aby uzyskać dostęp.</p>
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+    <h2 class="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create an account</h2>
+  </div>
+
+  <div class="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+      
+      @if (error) {
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">{{error}}</div>
+      }
+
+      <div>
+        <label class="block text-sm font-medium text-gray-900">First Name</label>
+        <input type="text" formControlName="firstName" #firstnameInput
+               class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+               [class.ring-red-500]="submitted && f.firstName.errors">
+        @if (submitted && f.firstName.errors?.required) {
+          <div class="mt-1 text-xs text-red-500">First name is required</div>
+        }
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-900">Last Name</label>
+        <input type="text" formControlName="lastName" 
+               class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+               [class.ring-red-500]="submitted && f.lastName.errors">
+        @if (submitted && f.lastName.errors?.required) {
+          <div class="mt-1 text-xs text-red-500">Last name is required</div>
+        }
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-900">Username</label>
+        <input type="text" formControlName="username" 
+               class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+               [class.ring-red-500]="submitted && f.username.errors">
+        @if (submitted && f.username.errors?.required) {
+          <div class="mt-1 text-xs text-red-500">Username is required</div>
+        }
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-900">Password</label>
+        <input type="password" formControlName="password" 
+               class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+               [class.ring-red-500]="submitted && f.password.errors">
+        @if (submitted && f.password.errors) {
+          <div class="mt-1 text-xs text-red-500">
+            @if (f.password.errors.required) { Password is required }
+            @if (f.password.errors.minlength) { Must be at least 6 characters }
+          </div>
+        }
+      </div>
+
+      <div class="flex items-center gap-4 pt-4">
+        <button [disabled]="loading" class="flex-1 justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50">
+          @if (loading) { <span class="animate-spin inline-block mr-2">...</span> }
+          Register
+        </button>
+        <a routerLink="../login" class="text-sm font-semibold text-blue-600 hover:text-blue-500">Cancel</a>
+      </div>
+    </form>
+  </div>
 </div>
