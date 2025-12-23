@@ -1,4 +1,11 @@
-# AddressBookManagement3
+# AccessManager
+
+## Setup
+1. Instalacja Node.js
+2. Instalacja Angular CLI: npm i -g @angular/cli
+3. Stworzenie projektu: ng new AccessManager
+4. Instalacja tailwindcss: npm install tailwindcss @tailwindcss/postcss postcss --force
+
 
 ## CR-002: User Login and Backend Integration
 
@@ -56,3 +63,8 @@
 2. Tworzenie Listy Użytkowników (ListComponent)
 3. Tworzenie Formularza Dodawania i Edycji (AddEditComponent)
 4. Konfiguracja Routingu (Lazy Loading)
+
+## CR-006: Code refactoring to use signals
+1. Migrate to signals
+1. Przejście na Standalone Components
+2. Funkcyjne Interceptory i Strażnicy (Guards)

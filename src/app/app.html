@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto flex justify-between items-center">
     <!-- Left side: Navigation links -->
     <div class="flex gap-6">      
-      @if (user) {
+      @if (user()) {
       <!--  Home: Always available (or protected by AuthGuard) -->
       <a routerLink="/" 
          routerLinkActive="text-blue-400 border-b-2 border-blue-400" 
@@ -17,7 +17,7 @@
       </a>
     }
    <!-- Guest view: Visible only when not logged in -->
-      @if (!user) {
+      @if (!user()) {
         <a routerLink="/user/login" 
            routerLinkActive="text-blue-400 border-b-2 border-blue-400" 
            class="hover:text-blue-400 transition-colors">
@@ -32,9 +32,9 @@
     </div>
 
     <!-- Right side: User actions -->
-    @if (user) {
+    @if (user()) {
       <div class="flex items-center gap-4">
-        <span class="text-slate-400 text-sm">Welcome, {{user.firstName}}!</span>
+        <span class="text-slate-400 text-sm">Welcome, {{user()!.firstName}}!</span>
         <button (click)="logout()" class="hover:text-red-400 transition-colors font-medium">
           Logout
         </button>

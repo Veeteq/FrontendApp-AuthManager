@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+import { map, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -12,23 +12,22 @@ import { User } from '@app/model/user'; // importujemy Twój model
 export class AuthService {
   private apiUrl = environment.apiUrl;
 
-  private userSubject: BehaviorSubject<User | null>;
-  public user: Observable<User | null>;
+  private userSignal = signal<User | null>(null);
+  public user = this.userSignal; // components can read user()
 
   constructor(private router: Router, private http: HttpClient) {
-    this.userSubject = new BehaviorSubject<User | null>(JSON.parse(localStorage.getItem('user')!));
-    this.user = this.userSubject.asObservable();
+    this.userSignal.set(JSON.parse(localStorage.getItem('user')!));
   }
 
   public get userValue(): User | null {
-    return this.userSubject.value;
+    return this.userSignal();
   }
 
   login(username: string, password: string): Observable<User | null> {
     return this.http.post<User>(`${this.apiUrl}/users/authenticate`, { username, password }).pipe(
       map((user) => {
         localStorage.setItem('user', JSON.stringify(user));
-        this.userSubject.next(user);
+        this.userSignal.set(user);
         return user;
       })
     );
@@ -36,7 +35,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('user');
-    this.userSubject.next(null);
+    this.userSignal.set(null);
     this.router.navigate(['/user/login']);
   }
 
@@ -60,7 +59,7 @@ export class AuthService {
         if (id === this.userValue?.id) {
           const updatedUser = { ...this.userValue, ...params };
           localStorage.setItem('user', JSON.stringify(updatedUser));
-          this.userSubject.next(updatedUser);
+          this.userSignal.set(updatedUser);
         }
         return user;
       })
