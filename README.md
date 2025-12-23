@@ -1,4 +1,11 @@
-# AddressBookManagement3
+# AccessManager
+
+## Setup
+1. Instalacja Node.js
+2. Instalacja Angular CLI: npm i -g @angular/cli
+3. Stworzenie projektu: ng new AccessManager
+4. Instalacja tailwindcss: npm install tailwindcss @tailwindcss/postcss postcss --force
+
 
 ## CR-002: User Login and Backend Integration
 

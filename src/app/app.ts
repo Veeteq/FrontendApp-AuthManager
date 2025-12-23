@@ -19,7 +19,7 @@ import { Alert } from "./components/alert/alert";
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('AddressBookManagement3');
+  protected readonly title = signal('Access Manager');
   user = signal<User | null>(null);
 
   constructor(private authService: AuthService) {
