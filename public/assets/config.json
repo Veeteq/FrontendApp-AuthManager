@@ -1,0 +1,6 @@
+{
+  "authServer": {
+    "apiUrl": "http://localhost:8282/api",
+    "version": "v1"
+  }
+}

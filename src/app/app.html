@@ -34,7 +34,7 @@
     <!-- Right side: User actions -->
     @if (user()) {
       <div class="flex items-center gap-4">
-        <span class="text-slate-400 text-sm">Welcome, {{user()!.firstName}}!</span>
+        <span class="text-slate-400 text-sm">Welcome, {{ user()?.firstName }}!</span>
         <button (click)="logout()" class="hover:text-red-400 transition-colors font-medium">
           Logout
         </button>

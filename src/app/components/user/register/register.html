@@ -7,7 +7,7 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
       <div>
         <label class="block text-sm font-medium text-gray-900">First Name</label>
-        <input type="text" formControlName="firstName" #firstnameInput
+        <input type="text" formControlName="firstName" #firstnameInput autocomplete="first-name"
                class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
                [class.ring-red-500]="submitted && f.firstName.errors">
         @if (submitted && f.firstName.errors?.required) {
@@ -17,7 +17,7 @@
 
       <div>
         <label class="block text-sm font-medium text-gray-900">Last Name</label>
-        <input type="text" formControlName="lastName" 
+        <input type="text" formControlName="lastName" autocomplete="last-name"
                class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
                [class.ring-red-500]="submitted && f.lastName.errors">
         @if (submitted && f.lastName.errors?.required) {
@@ -27,7 +27,7 @@
 
       <div>
         <label class="block text-sm font-medium text-gray-900">Username</label>
-        <input type="text" formControlName="username" 
+        <input type="text" formControlName="username" autocomplete="username"
                class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
                [class.ring-red-500]="submitted && f.username.errors">
         @if (submitted && f.username.errors?.required) {
@@ -37,7 +37,7 @@
 
       <div>
         <label class="block text-sm font-medium text-gray-900">Password</label>
-        <input type="password" formControlName="password" 
+        <input type="password" formControlName="password" autocomplete="current-password"
                class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
                [class.ring-red-500]="submitted && f.password.errors">
         @if (submitted && f.password.errors) {

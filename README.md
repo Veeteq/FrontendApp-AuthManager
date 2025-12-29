@@ -1,5 +1,16 @@
 # AccessManager
 
+## Resources:
+1. https://jasonwatmore.com/angular-15-free-course-1-create-base-project-structure
+2. https://jasonwatmore.com/angular-15-free-course-2-add-routing-multiple-pages
+3. https://jasonwatmore.com/angular-15-free-course-3-login-form-authentication-route-guard
+4. https://jasonwatmore.com/angular-15-free-course-4-registration-form-service-methods
+5. https://jasonwatmore.com/angular-15-free-course-5-alerts-home-page
+6. https://jasonwatmore.com/angular-15-free-course-6-user-management-crud-section
+7. https://jasonwatmore.com/angular-15-16-free-course-7-migrate-to-standalone-components-and-functional-interceptors
+8. https://jasonwatmore.com/angular-15-16-free-course-8-dockerize-app-with-nginx
+
+
 ## Setup
 1. Instalacja Node.js
 2. Instalacja Angular CLI: npm i -g @angular/cli
@@ -68,3 +79,25 @@
 1. Migrate to signals
 1. Przejście na Standalone Components
 2. Funkcyjne Interceptory i Strażnicy (Guards)
+
+## CR-007: Dockerize application
+1. Create Nginx Config for Angular
+2. Create Dockerfile
+3. Create .dockerignore file
+4. Build Docker Image for Angular App on Nginx
+```docker build -t access-mngr .```
+
+5. Run Docker Container with Angular App on Nginx  
+```docker run -d -p 8080:80 --name access-mngr access-mngr```
+
+
+## CR-008: Use external variables
+1. Przygotowanie pliku konfiguracyjnego: src/assets/config.json
+2. Przygotowanie pliku template: src/assets/config.template.json
+3. Serwis przechowujący konfigurację: config.service.ts
+4. Inicjalizacja przy starcie aplikacji (Angular 19+) using provideAppInitializer()
+5. Użycie adresu w serwisach API
+6. Konfiguracja Docker i Nginx
+```docker build -t access-mngr .```
+```docker run -d -p 8080:80 -it -e API_URL=http://moj-backend.com/api angular-app```
+```docker exec -it <angular-app> bash```

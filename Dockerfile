@@ -21,5 +21,10 @@ COPY nginx.conf /etc/nginx/conf.d/
 # UWAGA: W nowszych wersjach Angulara ścieżka to często dist/[nazwa-projektu]/browser
 COPY --from=build /app/dist/AccessManager/browser /usr/share/nginx/html
 
+# Copy the custom EntryPoint
+COPY ./entryPoint.sh /
+RUN chmod +x entryPoint.sh
+ENTRYPOINT ["sh","/entryPoint.sh"]
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

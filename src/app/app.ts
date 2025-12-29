@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { User } from './model/user';
 import { AuthService } from './_service/auth.service';
 import { Alert } from "./components/alert/alert";
 
@@ -19,13 +18,10 @@ import { Alert } from "./components/alert/alert";
   styleUrl: './app.css'
 })
 export class App {
+  private authService = inject(AuthService);
   protected readonly title = signal('Access Manager');
-  user = signal<User | null>(null);
-
-  constructor(private authService: AuthService) {
-    // Subscribe to user state to dynamically update the UI
-    this.user = this.authService.user;
-  }
+  protected readonly userSignal = this.authService.user;
+  protected readonly user = this.userSignal();
 
   logout(): void {
     // Call the service to clear local storage and redirect to login page
