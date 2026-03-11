@@ -12,9 +12,12 @@ import { environment } from '@environments/environment';
     const isApiUrl = req.url.startsWith(environment.apiUrl);
 
     if (isLoggedIn && isApiUrl) {
+      console.log('JWT Interceptor - adding Authorization header, ' + isLoggedIn + ', ' + isApiUrl);
       // Add the token to the request headers
-      req = req.clone();
-      req.headers.set('Authorization', `Bearer ${user.token}`);
+      //req = req.clone();
+      //req.headers.set('Authorization', `Bearer ${user.token}`);
+      req = req.clone({setHeaders: {Authorization: `Bearer ${user.token}`}});
+      console.log('Modified Request Headers:', req.headers);
       //req = req.clone({setHeaders: {Authorization: `Bearer ${user.token}`}});
     }
 

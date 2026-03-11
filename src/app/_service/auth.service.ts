@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { User } from '@app/model/user'; // importujemy Twój model
 import { ConfigService } from './config.service';
@@ -17,6 +17,9 @@ export class AuthService {
   private userSignal = signal<User | null>(null);
   public user = this.userSignal.asReadonly; // components can only read user()
 
+  // add default Accept header
+  private headers = new HttpHeaders({ 'Accept': 'application/json' });
+
   constructor() {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
@@ -29,8 +32,9 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<User | null> {
-    return this.http.post<User>(`${this.config.apiUrl}/users/authenticate`, { username, password }).pipe(
+    return this.http.post<User>(`${this.config.apiUrl}/auth/authenticate`, { username, password }, { headers: this.headers }).pipe(
       map((user) => {
+        console.log('User logged in', user);
         localStorage.setItem('user', JSON.stringify(user));
         this.userSignal.set(user);
         return user;
@@ -46,19 +50,20 @@ export class AuthService {
 
   // New register method sending data to Spring Boot
   register(user: User) {
-    return this.http.post(`${this.config.apiUrl}/users`, user);
+    return this.http.post(`${this.config.apiUrl}/users`, user, { headers: this.headers });
   }
 
   getAll() : Observable<User[]> {
-    return this.http.get<User[]>(`${this.config.apiUrl}/users`);
+
+    return this.http.get<User[]>(`${this.config.apiUrl}/users`, { headers: this.headers });
   }
 
   getById(id: number) : Observable<User> {
-    return this.http.get<User>(`${this.config.apiUrl}/users/${id}`);
+    return this.http.get<User>(`${this.config.apiUrl}/users/${id}`, { headers: this.headers });
   }
 
   update(id: number, params: any) : Observable<User> {
-    return this.http.put(`${this.config.apiUrl}/users/${id}`, params).pipe(
+    return this.http.put<User>(`${this.config.apiUrl}/users/${id}`, params, { headers: this.headers }).pipe(
       map((user) => {
         //Update local storage if the logged in user updated their own record
         if (id === this.userValue?.id) {
@@ -72,7 +77,7 @@ export class AuthService {
   }
 
   delete(id: number) {
-    return this.http.delete(`${this.config.apiUrl}/users/${id}`)
+    return this.http.delete(`${this.config.apiUrl}/users/${id}`, { headers: this.headers })
     .pipe(map((user) => {
         // Auto logout if the logged-in user deleted their own record [4]
         if (id == this.userValue?.id) {
