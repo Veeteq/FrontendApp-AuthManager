@@ -6,4 +6,5 @@ export interface User {
     token?: string;
 
     isDeleting?: boolean;
+    roles?: string[];
 }

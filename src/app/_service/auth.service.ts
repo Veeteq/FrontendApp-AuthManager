@@ -1,9 +1,9 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { map, Observable } from 'rxjs';
 
-import { User } from '@app/model/user'; // importujemy Twój model
+import { User } from '@app/model/user';
 import { ConfigService } from './config.service';
 
 @Injectable({
@@ -24,48 +24,101 @@ export class AuthService {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       this.userSignal.set(JSON.parse(savedUser));
-    }    
+    }
   }
 
   public get userValue(): User | null {
     return this.userSignal();
   }
 
-  login(username: string, password: string): Observable<User | null> {
-    return this.http.post<User>(`${this.config.apiUrl}/auth/authenticate`, { username, password }, { headers: this.headers }).pipe(
-      map((user) => {
-        console.log('User logged in', user);
-        localStorage.setItem('user', JSON.stringify(user));
-        this.userSignal.set(user);
-        return user;
+  /**
+   * Authenticates user against Spring Boot backend and stores response details
+   */
+  login(username: string, password: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.config.apiUrl}/auth/login`,
+      { username, password },
+      { withCredentials: true }
+    ).pipe(
+      map((response) => {
+        // Flatten user profile and token into the local session object
+        const userData = {
+          ...response,
+          id: response.user?.id,
+          username: response.user?.username || username,
+          email: response.user?.email,
+          firstName: response.user?.firstName,
+          lastName: response.user?.lastName
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+        this.userSignal.set(userData);
+        return userData;
       })
     );
   }
 
+  /**
+   * Triggers silent refresh using httpOnly refresh token cookie
+   */
+  refreshToken(): Observable<any> {
+    return this.http.post<any>(
+      `${this.config.apiUrl}/auth/refresh`,
+      {},
+      { withCredentials: true }
+    ).pipe(
+      map((response) => {
+        const currentUser = this.userValue;
+        if (currentUser) {
+          const updatedUser = {
+            ...currentUser,
+            token: response.token
+          };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          this.userSignal.set(updatedUser);
+        }
+        return response;
+      })
+    );
+  }
+
+  /**
+   * Clears local user state and redirects to login page
+   */
   logout(): void {
     localStorage.removeItem('user');
     this.userSignal.set(null);
     this.router.navigate(['/user/login']);
   }
 
-  // New register method sending data to Spring Boot
-  register(user: User) {
-    return this.http.post(`${this.config.apiUrl}/users`, user, { headers: this.headers });
+  /**
+   * Registers a new user account
+   */
+  register(user: User): Observable<any> {
+    return this.http.post(`${this.config.apiUrl}/auth/register`, user, { headers: this.headers });
   }
 
-  getAll() : Observable<User[]> {
+  /**
+   * Fetches all users (Admin only)
+   */
+  getAll(): Observable<User[]> {
 
-    return this.http.get<User[]>(`${this.config.apiUrl}/users`, { headers: this.headers });
+    return this.http.get<User[]>(`${this.config.apiUrl}/admin/users`, { headers: this.headers });
   }
 
-  getById(id: number) : Observable<User> {
-    return this.http.get<User>(`${this.config.apiUrl}/users/${id}`, { headers: this.headers });
+  /**
+   * Fetches a single user by ID (Admin only)
+   */
+  getById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.config.apiUrl}/admin/users/${id}`, { headers: this.headers });
   }
 
-  update(id: number, params: any) : Observable<User> {
-    return this.http.put<User>(`${this.config.apiUrl}/users/${id}`, params, { headers: this.headers }).pipe(
+  /**
+   * Updates user details by ID (Admin only)
+   */
+  update(id: number, params: any): Observable<User> {
+    return this.http.put<User>(`${this.config.apiUrl}/admin/users/${id}`, params, { headers: this.headers }).pipe(
       map((user) => {
-        //Update local storage if the logged in user updated their own record
+        // Update local storage if the logged-in user updated their own record
         if (id === this.userValue?.id) {
           const updatedUser = { ...this.userValue, ...params };
           localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -76,13 +129,17 @@ export class AuthService {
     );
   }
 
-  delete(id: number) {
-    return this.http.delete(`${this.config.apiUrl}/users/${id}`, { headers: this.headers })
-    .pipe(map((user) => {
-        // Auto logout if the logged-in user deleted their own record [4]
-        if (id == this.userValue?.id) {
+  /**
+   * Deletes user by ID (Admin only)
+   */
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.config.apiUrl}/admin/users/${id}`, { headers: this.headers }).pipe(
+      map((res) => {
+        // Auto logout if the logged-in user deleted their own account
+        if (id === this.userValue?.id) {
           this.logout();
         }
+        return res;
       })
     );
   }

@@ -1,22 +1,32 @@
-import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, RouterStateSnapshot } from '@angular/router';
-import { AuthService } from './auth.service';
-import { Injectable } from '@angular/core';
+import { inject } from "@angular/core";
+import { CanActivateFn, Router } from "@angular/router";
+import { AuthService } from "./auth.service";
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AuthGuard implements CanActivate {
-  constructor(private router: Router, private authService: AuthService) {}
+export const authGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
-    const user = this.authService.userValue;
-    if (user) {
-      // Authorized so return true
-      return true;
+  const currentUser = authService.userValue;
+
+  if (currentUser) {
+    // Check if the route requires specific roles (e.g., ACCOUNT_ADMIN)
+    const requiredRoles = route.data['roles'] as Array<string>;
+    if (requiredRoles && requiredRoles.length > 0) {
+      const userRoles = currentUser.roles || [];
+      const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
+
+      if (!hasRequiredRole) {
+        // Logged in but missing required role -> redirect to home
+        router.navigate(['/']);
+        return false;
+      }
     }
-
-    // Not logged in so redirect to login page with the return url
-    this.router.navigate(['/user/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+    
+    // Authenticated and authorized
+    return true;
   }
+
+  // Unauthenticated -> redirect to login page with return URL
+  router.navigate(['/user/login'], { queryParams: { returnUrl: state.url } });
+  return false;
 }
