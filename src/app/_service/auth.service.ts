@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { finalize, map, Observable } from 'rxjs';
 
 import { User } from '@app/model/user';
 import { ConfigService } from './config.service';
@@ -15,7 +15,7 @@ export class AuthService {
   private router = inject(Router);
 
   private userSignal = signal<User | null>(null);
-  public user = this.userSignal.asReadonly; // components can only read user()
+  public user = this.userSignal.asReadonly(); // components can only read user()
 
   // add default Accept header
   private headers = new HttpHeaders({ 'Accept': 'application/json' });
@@ -82,12 +82,20 @@ export class AuthService {
   }
 
   /**
-   * Clears local user state and redirects to login page
+   * Performs full logout: revokes refresh token on backend,
+   * clears httpOnly cookie, wipes local session state, and redirects to login.
    */
   logout(): void {
-    localStorage.removeItem('user');
-    this.userSignal.set(null);
-    this.router.navigate(['/user/login']);
+    this.http.post(`${this.config.apiUrl}/auth/logout`, {}, { withCredentials: true })
+      .pipe(
+        // Ensure local session cleanup always runs regardless of HTTP response status or network failure
+        finalize(() => {
+          localStorage.removeItem('user');
+          this.userSignal.set(null);
+          this.router.navigate(['/user/login']);
+        })
+      )
+      .subscribe();
   }
 
   /**
