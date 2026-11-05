@@ -20,8 +20,7 @@ import { Alert } from "./components/alert/alert";
 export class App {
   private authService = inject(AuthService);
   protected readonly title = signal('Access Manager');
-  protected readonly userSignal = this.authService.user;
-  protected readonly user = this.userSignal();
+  protected readonly user = this.authService.user;
 
   logout(): void {
     // Call the service to clear local storage and redirect to login page
