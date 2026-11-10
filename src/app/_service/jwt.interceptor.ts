@@ -10,7 +10,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   // Check if the user is logged in and the request is directed to the API URL
   const isLoggedIn = user?.token;
-  const isApiUrl = req.url.startsWith(configService.apiUrl);
+  const isApiUrl = req.url.startsWith(configService.authApiUrl);
 
   // Przygotowanie nagłówków
   let setHeaders: { [key: string]: string } = {};

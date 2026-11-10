@@ -36,7 +36,7 @@ export class AuthService {
    */
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(
-      `${this.config.apiUrl}/auth/login`,
+      `${this.config.authApiUrl}/auth/login`,
       { username, password },
       { withCredentials: true }
     ).pipe(
@@ -62,7 +62,7 @@ export class AuthService {
    */
   refreshToken(): Observable<any> {
     return this.http.post<any>(
-      `${this.config.apiUrl}/auth/refresh`,
+      `${this.config.authApiUrl}/auth/refresh`,
       {},
       { withCredentials: true }
     ).pipe(
@@ -86,7 +86,7 @@ export class AuthService {
    * clears httpOnly cookie, wipes local session state, and redirects to login.
    */
   logout(): void {
-    this.http.post(`${this.config.apiUrl}/auth/logout`, {}, { withCredentials: true })
+    this.http.post(`${this.config.authApiUrl}/auth/logout`, {}, { withCredentials: true })
       .pipe(
         // Ensure local session cleanup always runs regardless of HTTP response status or network failure
         finalize(() => {
@@ -102,7 +102,7 @@ export class AuthService {
    * Registers a new user account
    */
   register(user: User): Observable<any> {
-    return this.http.post(`${this.config.apiUrl}/auth/register`, user, { headers: this.headers });
+    return this.http.post(`${this.config.authApiUrl}/auth/register`, user, { headers: this.headers });
   }
 
   /**
@@ -110,21 +110,21 @@ export class AuthService {
    */
   getAll(): Observable<User[]> {
 
-    return this.http.get<User[]>(`${this.config.apiUrl}/admin/users`, { headers: this.headers });
+    return this.http.get<User[]>(`${this.config.authApiUrl}/admin/users`, { headers: this.headers });
   }
 
   /**
    * Fetches a single user by ID (Admin only)
    */
   getById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.config.apiUrl}/admin/users/${id}`, { headers: this.headers });
+    return this.http.get<User>(`${this.config.authApiUrl}/admin/users/${id}`, { headers: this.headers });
   }
 
   /**
    * Updates user details by ID (Admin only)
    */
   update(id: number, params: any): Observable<User> {
-    return this.http.put<User>(`${this.config.apiUrl}/admin/users/${id}`, params, { headers: this.headers }).pipe(
+    return this.http.put<User>(`${this.config.authApiUrl}/admin/users/${id}`, params, { headers: this.headers }).pipe(
       map((user) => {
         // Update local storage if the logged-in user updated their own record
         if (id === this.userValue?.id) {
@@ -141,7 +141,7 @@ export class AuthService {
    * Deletes user by ID (Admin only)
    */
   delete(id: number): Observable<any> {
-    return this.http.delete(`${this.config.apiUrl}/admin/users/${id}`, { headers: this.headers }).pipe(
+    return this.http.delete(`${this.config.authApiUrl}/admin/users/${id}`, { headers: this.headers }).pipe(
       map((res) => {
         // Auto logout if the logged-in user deleted their own account
         if (id === this.userValue?.id) {

@@ -1,4 +1,4 @@
-# AccessManager
+# AuthManager
 
 ## Resources:
 1. https://jasonwatmore.com/angular-15-free-course-1-create-base-project-structure
@@ -14,7 +14,7 @@
 ## Setup
 1. Instalacja Node.js
 2. Instalacja Angular CLI: npm i -g @angular/cli
-3. Stworzenie projektu: ng new AccessManager
+3. Stworzenie projektu: ng new AuthManager
 4. Instalacja tailwindcss: npm install tailwindcss @tailwindcss/postcss postcss --force
 
 

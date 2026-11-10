@@ -1,8 +1,7 @@
-export interface AuthServerConfig {
-  apiUrl: string;
-  version: string;
+export interface ApiConfig {
+  authUrl: string;
 }
 
 export interface AppConfig {
-  authServer: AuthServerConfig;
+  api: ApiConfig;
 }

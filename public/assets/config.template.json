@@ -1,6 +1,0 @@
-{
-  "authServer": {
-    "apiUrl": "${API_URL}",
-    "version": "v1"
-  }
-}
