@@ -36,6 +36,16 @@
       </div>
 
       <div>
+        <label class="block text-sm font-medium text-gray-900">Email</label>
+        <input type="email" formControlName="email" autocomplete="email"
+               class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+               [class.ring-red-500]="submitted && f.email.errors">
+        @if (submitted && f.email.errors?.required) {
+          <div class="mt-1 text-xs text-red-500">Email is required</div>
+        }
+      </div>
+
+      <div>
         <label class="block text-sm font-medium text-gray-900">Password</label>
         <input type="password" formControlName="password" autocomplete="current-password"
                class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
@@ -43,7 +53,20 @@
         @if (submitted && f.password.errors) {
           <div class="mt-1 text-xs text-red-500">
             @if (f.password.errors.required) { Password is required }
-            @if (f.password.errors.minlength) { Must be at least 6 characters }
+            @if (f.password.errors.minlength) { Must be at least 8 characters }
+          </div>
+        }
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-900">Confirm Password</label>
+        <input type="password" formControlName="confirmPassword" autocomplete="current-password"
+               class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm"
+               [class.ring-red-500]="submitted && f.confirmPassword.errors">
+        @if (submitted && f.confirmPassword.errors) {
+          <div class="mt-1 text-xs text-red-500">
+            @if (f.confirmPassword.errors.required) { Confirm Password is required }
+            @if (f.confirmPassword.errors.minlength) { Must be at least 8 characters }
           </div>
         }
       </div>

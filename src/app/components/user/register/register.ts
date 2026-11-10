@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AlertService } from '@app/_service/alert.service';
 import { AuthService } from '@app/_service/auth.service';
 import { first } from 'rxjs';
+import { equalValidator } from '../equal.validator';
 
 @Component({
   standalone: true,
@@ -36,8 +37,11 @@ export class Register implements OnInit, AfterViewInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       username: ['', Validators.required],
-      // Password must be at least 6 characters long
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      email: ['', [Validators.required, Validators.email]],
+      // Password must be at least 8 characters long
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+      validators: [ equalValidator('password', 'confirmPassword') ]
     });
   }
 

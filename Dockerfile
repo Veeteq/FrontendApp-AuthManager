@@ -1,5 +1,5 @@
 # Stage 1 - build the application
-FROM node:20-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 
 # Kopiujemy pliki zależności osobno, aby wykorzystać cache Dockera [4]
@@ -8,7 +8,7 @@ RUN npm ci
 
 # Kopiujemy resztę kodu i budujemy aplikację
 COPY . .
-RUN npm run build --configuration=production
+RUN npm run build -- --configuration=production
 
 # Etap 2: Serwowanie aplikacji przez Nginx (Runtime Stage) [5]
 FROM nginx:alpine
@@ -19,12 +19,7 @@ COPY nginx.conf /etc/nginx/conf.d/
 
 # Kopiujemy skompilowaną aplikację z pierwszego etapu [6]
 # UWAGA: W nowszych wersjach Angulara ścieżka to często dist/[nazwa-projektu]/browser
-COPY --from=build /app/dist/AccessManager/browser /usr/share/nginx/html
-
-# Copy the custom EntryPoint
-COPY ./entryPoint.sh /
-RUN chmod +x entryPoint.sh
-ENTRYPOINT ["sh","/entryPoint.sh"]
+COPY --from=build /app/dist/AuthManager/browser /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlertService } from '@app/_service/alert.service';
 import { AuthService } from '@app/_service/auth.service';
 import { first } from 'rxjs';
+import { equalValidator } from '../equal.validator';
 
 @Component({
   standalone: true,
@@ -33,8 +34,11 @@ export class AddEdit implements OnInit{
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       // Password must be at least 6 characters long, only required for new users
-      password: ['', [Validators.minLength(6), ...(this.id ? [Validators.required] : [])]],
+      password: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
+      confirmPassword: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
+      validators: [ equalValidator('password', 'confirmPassword') ]
     });
 
     if (this.id) {

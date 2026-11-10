@@ -10,7 +10,9 @@
         <input type="text" formControlName="username" placeholder="Username" #usernameInput autocomplete="username"
                class="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
                [ngClass]="{ 'ring-red-500': submitted && f.username.errors }">
-        <div *ngIf="submitted && f.username.errors?.required" class="mt-1 text-xs text-red-500 italic">Required</div>
+        @if (submitted && f.username.errors) {
+          <div class="mt-1 text-xs text-red-500 italic">Required</div>
+        }               
       </div>
 
       <div>
