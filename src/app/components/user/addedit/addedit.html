@@ -73,6 +73,7 @@
               </div>
             }
           </div>
+
           <!-- Confirm Password -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -89,6 +90,22 @@
                 @if (f['confirmPassword'].errors['required']) { <span>Password is required</span> }
                 @if (f['confirmPassword'].errors['minlength']) { <span>Password must be at least 8 characters</span> }
               </div>
+            }
+          </div>
+        </div>
+
+        <!-- User Roles Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">User Roles</label>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-md border">
+            @for (role of availableRoles; track role) {
+              <label class="inline-flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox"
+                [checked]="isRoleSelected(role)"
+                (change)="onRoleChange(role, $event)"
+                class="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 border-gray-300" />
+                <span class="text-sm font-medium text-gray-700">{{ role }}</span>
+              </label>
             }
           </div>
         </div>

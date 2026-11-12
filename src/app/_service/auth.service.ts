@@ -151,4 +151,15 @@ export class AuthService {
       })
     );
   }
+
+  /**
+   * Assigns roles to a user (Admin only)
+   */
+  assignRoles(id: number, roles: string[]): Observable<User> {
+    return this.http.put<User>(
+      `${this.config.authApiUrl}/admin/users/${id}/roles`,
+      { roles },
+      { headers: this.headers }
+    );
+  }
 }
