@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './_service/auth.service';
 import { Alert } from "./components/alert/alert";
@@ -21,6 +21,10 @@ export class App {
   private authService = inject(AuthService);
   protected readonly title = signal('Access Manager');
   protected readonly user = this.authService.user;
+
+  protected readonly isAdmin = computed(() => 
+    this.user()?.roles?.includes('ACCOUNT_ADMIN') ?? false
+  );
 
   logout(): void {
     // Call the service to clear local storage and redirect to login page

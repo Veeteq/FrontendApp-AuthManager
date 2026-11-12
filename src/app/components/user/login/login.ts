@@ -72,7 +72,7 @@ export class Login implements OnInit, AfterViewInit {
           this.router.navigateByUrl(returnUrl);
         },
         error: (err) => {
-          this.alertService.error(err.error.message);
+          this.alertService.error(err);
           this.loading = false;
         },
       });

@@ -10,12 +10,15 @@
          class="hover:text-blue-400 transition-colors">
          Home
       </a>
-      <a routerLink="/users" 
-         routerLinkActive="text-blue-400 border-b-2 border-blue-400"          
-         class="hover:text-blue-400 transition-colors">
-         Users
-      </a>
+      @if (isAdmin()) {
+        <a routerLink="/users" 
+           routerLinkActive="text-blue-400 border-b-2 border-blue-400"          
+           class="hover:text-blue-400 transition-colors">
+           Users
+        </a>
+      }
     }
+    
    <!-- Guest view: Visible only when not logged in -->
       @if (!user()) {
         <a routerLink="/user/login" 
