@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlertService } from '@app/_service/alert.service';
 import { AuthService } from '@app/_service/auth.service';
-import { first } from 'rxjs';
+import { first, switchMap } from 'rxjs';
 import { equalValidator } from '../equal.validator';
 
 @Component({
@@ -25,10 +25,21 @@ export class AddEdit implements OnInit{
   loading = signal<boolean>(false);
   submitting = signal<boolean>(false);
 
+  // Available user roles matching Spring Boot UserRole enum
+  readonly availableRoles: string[] = [
+    'USER_ROLE',
+    'ACCOUNT_ADMIN',
+    'DOCUMENT_ADMIN',
+    'ITEM_ADMIN'
+  ];
+
+  // Set of selected roles
+  selectedRoles: Set<string> = new Set(['USER_ROLE']);
+
   constructor(private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute, private authService: AuthService, private alertService: AlertService) {}
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.params.id;
+    this.id = this.route.snapshot.params['id'] ? Number(this.route.snapshot.params['id']) : null;
 
     this.form = this.formBuilder.group({
       firstName: ['', Validators.required],
@@ -57,6 +68,20 @@ export class AddEdit implements OnInit{
 
   get f() { return this.form.controls; }
 
+  // Toggle role selection in the checkboxes
+  onRoleChange(role: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) {
+      this.selectedRoles.add(role);
+    } else {
+      this.selectedRoles.delete(role);
+    }
+  }
+
+  isRoleSelected(role: string): boolean {
+    return this.selectedRoles.has(role);
+  }
+
   onSubmit(): void {
     this.submitted = true;
     this.alertService.clear();
@@ -65,13 +90,14 @@ export class AddEdit implements OnInit{
     if (this.form.invalid) return;    
 
     this.submitting.set(true);
+    const rolesArray = Array.from(this.selectedRoles);
 
-    const action = this.id
-      ? this.authService.update(this.id, this.form.value)
-      : this.authService.register(this.form.value);
-
-    action
-      .pipe(first())
+    if (this.id) {
+      this.authService.update(this.id, this.form.value)
+      .pipe(
+        switchMap(() => this.authService.assignRoles(this.id!, rolesArray)),
+        first()
+      )
       .subscribe({
         next: () => {
           this.alertService.success('User saved', true);
@@ -83,6 +109,24 @@ export class AddEdit implements OnInit{
           this.submitting.set(false);
         }
       });
+    } else {
+      this.authService.register(this.form.value)
+      .pipe(
+        first()
+      )
+      .subscribe({
+        next: () => {
+          this.alertService.success('User saved', true);
+          this.router.navigateByUrl('/users');
+
+        },
+        error: (err) => {
+          this.alertService.error(err);
+          this.submitting.set(false);
+        }
+      });
+    }
+      
   }
   
 }
