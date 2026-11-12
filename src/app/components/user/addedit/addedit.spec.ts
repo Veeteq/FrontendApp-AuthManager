@@ -1,20 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Add } from './add';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, provideRouter } from '@angular/router';
+import { AddEdit } from './addedit';
 
-describe('Add', () => {
-  let component: Add;
-  let fixture: ComponentFixture<Add>;
+describe('AddEdit', () => {
+  let component: AddEdit;
+  let fixture: ComponentFixture<AddEdit>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Add]
-    })
-    .compileComponents();
+      imports: [AddEdit],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              params: { id: null } // Mock route params for new user mode
+            }
+          }
+        }
+      ]
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(Add);
+    fixture = TestBed.createComponent(AddEdit);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

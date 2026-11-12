@@ -23,6 +23,18 @@ pipeline {
       }
     }
 
+    stage('Build & Test Frontend') {
+      steps {
+        echo 'Installing dependencies, running tests and building Angular frontend...'
+        dir("${env.FRONTEND_DIR}") {
+          sh 'npm ci'
+          // Run Angular tests in headless Chrome mode before building
+          sh 'npm run test -- --watch=false'
+          sh 'npm run build -- --configuration=production'
+        }
+      }
+    }
+
     stage('Build Docker Image') {
       steps {
         script {
@@ -41,7 +53,6 @@ pipeline {
             docker network create ${NETWORK_NAME}
             docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
           '''
-
           sh '''
             docker run -d \
             --name ${CONTAINER_NAME} \
@@ -57,35 +68,32 @@ pipeline {
       steps {
         sh '''
           echo "Waiting for ${CONTAINER_NAME} ..."
-
           for i in $(seq 1 30); do
             if curl --silent --fail http://${VM_HOST}:${HOST_PORT}/ > /dev/null; then
               echo "${CONTAINER_NAME} is ready"
               exit 0
             fi
-
             echo "Not ready yet. Attempt $i/30"
             sleep 2
           done
-
           echo "${CONTAINER_NAME} did not become ready within 60 seconds."
           docker logs ${CONTAINER_NAME}
           exit 1
         '''
       }
     }
-  }
 
-  post {
-    success {
-      echo 'Pipeline completed successfully.'
-    }
-    failure {
-      echo 'Pipeline failed. Check the logs for details.'
-    }
-    always {
-      echo 'Cleaning up...'
-      cleanWs()
+    post {
+      success {
+        echo 'Pipeline completed successfully.'
+      }
+      failure {
+        echo 'Pipeline failed. Check the logs for details.'
+      }
+      always {
+        echo 'Cleaning up...'
+        cleanWs()
+      }
     }
   }
 }

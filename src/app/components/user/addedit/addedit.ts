@@ -38,18 +38,20 @@ export class AddEdit implements OnInit{
       // Password must be at least 6 characters long, only required for new users
       password: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
       confirmPassword: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
-      validators: [ equalValidator('password', 'confirmPassword') ]
+    },
+    {
+      validators: [equalValidator('password', 'confirmPassword')]
     });
 
     if (this.id) {
       this.title.set('Edit User');
       this.loading.set(true);
       this.authService.getById(this.id)
-      .pipe(first())
-      .subscribe((user) => {
-        this.form.patchValue(user);
-        this.loading.set(false);
-      });
+        .pipe(first())
+        .subscribe((user) => {
+          this.form.patchValue(user);
+          this.loading.set(false);
+        });
     }
   }
 
@@ -77,7 +79,7 @@ export class AddEdit implements OnInit{
 
         },
         error: (err) => {
-          this.alertService.error(err.error.message);
+          this.alertService.error(err);
           this.submitting.set(false);
         }
       });

@@ -25,6 +25,7 @@ echo "Checking prerequisites..."
 
 require_command docker
 require_command curl
+require_command npm
 
 docker info >/dev/null 2>&1 || fail "Docker Desktop is not running."
 
@@ -36,6 +37,10 @@ echo " Network     : ${NETWORK_NAME}"
 echo " Host port   : ${HOST_PORT}"
 echo " Container   : ${CONTAINER_PORT}"
 echo
+
+# Step 1: Run unit tests before building the image
+echo "Running Angular unit tests..."
+npm run test -- --watch=false || fail "Unit tests failed. Aborting image build."
 
 echo "Configuring Docker network..."
 

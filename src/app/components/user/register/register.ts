@@ -40,7 +40,9 @@ export class Register implements OnInit, AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       // Password must be at least 8 characters long
       password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],      
+    },
+    {
       validators: [ equalValidator('password', 'confirmPassword') ]
     });
   }
@@ -76,7 +78,7 @@ export class Register implements OnInit, AfterViewInit {
           this.router.navigate(['/user/login'], { queryParams: { registered: true } });
         },
         error: (err) => {
-          this.alertService.error(err.error.message);
+          this.alertService.error(err);
           this.loading = false;
         }
       });
