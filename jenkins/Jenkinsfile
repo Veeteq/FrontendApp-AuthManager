@@ -1,6 +1,9 @@
 pipeline {
   agent any
 
+  tools {
+    nodejs 'NodeJS-24'
+  }
   environment {
     VM_HOST = '192.168.56.104'
     NETWORK_NAME = 'backend-network'
@@ -13,7 +16,7 @@ pipeline {
   }
 
   parameters {
-        string(name: 'BRANCH', defaultValue: 'develop/ab/cr-010-configure-jenkins-pipeline', description: 'Branch name to build')
+        string(name: 'BRANCH', defaultValue: 'addressbook', description: 'Branch name to build')
   }
 
   stages {
@@ -26,12 +29,10 @@ pipeline {
     stage('Build & Test Frontend') {
       steps {
         echo 'Installing dependencies, running tests and building Angular frontend...'
-        dir("${env.FRONTEND_DIR}") {
-          sh 'npm ci'
-          // Run Angular tests in headless Chrome mode before building
-          sh 'npm run test -- --watch=false'
-          sh 'npm run build -- --configuration=production'
-        }
+        sh 'npm ci'
+        // Run Angular tests in headless Chrome mode before building
+        sh 'npm run test -- --watch=false'
+        sh 'npm run build -- --configuration=production'        
       }
     }
 
@@ -82,18 +83,19 @@ pipeline {
         '''
       }
     }
-
-    post {
-      success {
-        echo 'Pipeline completed successfully.'
-      }
-      failure {
-        echo 'Pipeline failed. Check the logs for details.'
-      }
-      always {
-        echo 'Cleaning up...'
-        cleanWs()
-      }
+  }
+    
+  post {
+    success {
+      echo 'Pipeline completed successfully.'
+    }
+    failure {
+      echo 'Pipeline failed. Check the logs for details.'
+    }
+    always {
+      echo 'Cleaning up...'
+      cleanWs()
     }
   }
+  
 }
