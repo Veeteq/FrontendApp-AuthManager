@@ -54,6 +54,7 @@
           </div>
         </div>
         
+        @if (!id) { <!-- Hide Password Elements for updating user-->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Password -->
           <div>
@@ -93,6 +94,7 @@
             }
           </div>
         </div>
+        }
 
         <!-- User Roles Selection -->
         <div>

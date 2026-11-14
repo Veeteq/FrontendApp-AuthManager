@@ -16,7 +16,7 @@ import { equalValidator } from '../equal.validator';
   templateUrl: './addedit.html',
   styleUrl: './addedit.css',
 })
-export class AddEdit implements OnInit{
+export class AddEdit implements OnInit {
   form!: FormGroup;
   id?: number | null;
   submitted = false;
@@ -34,52 +34,68 @@ export class AddEdit implements OnInit{
   ];
 
   // Set of selected roles
-  selectedRoles: Set<string> = new Set(['USER_ROLE']);
+  selectedRoles = signal<Set<string>>(new Set([]));
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute, private authService: AuthService, private alertService: AlertService) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private alertService: AlertService,
+  ) {}
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'] ? Number(this.route.snapshot.params['id']) : null;
 
-    this.form = this.formBuilder.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      username: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      // Password must be at least 6 characters long, only required for new users
-      password: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
-      confirmPassword: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
-    },
-    {
-      validators: [equalValidator('password', 'confirmPassword')]
-    });
+    this.form = this.formBuilder.group(
+      {
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        username: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        // Password must be at least 6 characters long, only required for new users
+        password: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
+        confirmPassword: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
+      },
+      {
+        validators: [equalValidator('password', 'confirmPassword')],
+      },
+    );
 
     if (this.id) {
       this.title.set('Edit User');
       this.loading.set(true);
-      this.authService.getById(this.id)
+      this.authService
+        .getById(this.id)
         .pipe(first())
         .subscribe((user) => {
           this.form.patchValue(user);
+          this.selectedRoles.set(new Set(user.roles));
           this.loading.set(false);
         });
     }
   }
 
-  get f() { return this.form.controls; }
+  get f() {
+    return this.form.controls;
+  }
 
   // Toggle role selection in the checkboxes
   onRoleChange(role: string, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    if (checked) {
-      this.selectedRoles.add(role);
-    } else {
-      this.selectedRoles.delete(role);
-    }
+    this.selectedRoles.update((roles) => {
+      const updated = new Set(roles);
+      if (checked) {
+        updated.add(role);
+      } else {
+        updated.delete(role);
+      }
+      return updated;
+    });
   }
 
   isRoleSelected(role: string): boolean {
-    return this.selectedRoles.has(role);
+    return this.selectedRoles().has(role);
   }
 
   onSubmit(): void {
@@ -87,46 +103,42 @@ export class AddEdit implements OnInit{
     this.alertService.clear();
 
     // stop here if form is invalid
-    if (this.form.invalid) return;    
+    if (this.form.invalid) return;
 
     this.submitting.set(true);
-    const rolesArray = Array.from(this.selectedRoles);
+    const rolesArray = Array.from(this.selectedRoles());
 
     if (this.id) {
-      this.authService.update(this.id, this.form.value)
-      .pipe(
-        switchMap(() => this.authService.assignRoles(this.id!, rolesArray)),
-        first()
-      )
-      .subscribe({
-        next: () => {
-          this.alertService.success('User saved', true);
-          this.router.navigateByUrl('/users');
-
-        },
-        error: (err) => {
-          this.alertService.error(err);
-          this.submitting.set(false);
-        }
-      });
+      this.authService
+        .update(this.id, this.form.value)
+        .pipe(
+          switchMap(() => this.authService.assignRoles(this.id!, rolesArray)),
+          first(),
+        )
+        .subscribe({
+          next: () => {
+            this.alertService.success('User saved', true);
+            this.router.navigateByUrl('/users');
+          },
+          error: (err) => {
+            this.alertService.error(err);
+            this.submitting.set(false);
+          },
+        });
     } else {
-      this.authService.register(this.form.value)
-      .pipe(
-        first()
-      )
-      .subscribe({
-        next: () => {
-          this.alertService.success('User saved', true);
-          this.router.navigateByUrl('/users');
-
-        },
-        error: (err) => {
-          this.alertService.error(err);
-          this.submitting.set(false);
-        }
-      });
+      this.authService
+        .register(this.form.value)
+        .pipe(first())
+        .subscribe({
+          next: () => {
+            this.alertService.success('User saved', true);
+            this.router.navigateByUrl('/users');
+          },
+          error: (err) => {
+            this.alertService.error(err);
+            this.submitting.set(false);
+          },
+        });
     }
-      
   }
-  
 }
