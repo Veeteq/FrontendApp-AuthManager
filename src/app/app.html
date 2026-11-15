@@ -1,33 +1,40 @@
 <nav class="bg-slate-800 text-white p-4 shadow-md">
   <div class="max-w-7xl mx-auto flex justify-between items-center">
+
+    <!-- Branding / Logo -->
+    <!--
+    <div class="flex items-center gap-3">
+      <img src="assets/auth_manager_logo.png" alt="Access Manager Logo" class="h-9 w-auto" />
+    </div>-->
+
     <!-- Left side: Navigation links -->
-    <div class="flex gap-6">      
+    <div class="flex gap-6">
       @if (user()) {
       <!--  Home: Always available (or protected by AuthGuard) -->
-      <a routerLink="/" 
-         routerLinkActive="text-blue-400 border-b-2 border-blue-400" 
+      <a routerLink="/"
+         routerLinkActive="text-blue-400 border-b-2 border-blue-400"
          [routerLinkActiveOptions]="{exact: true}"
          class="hover:text-blue-400 transition-colors">
          Home
       </a>
       @if (isAdmin()) {
-        <a routerLink="/users" 
-           routerLinkActive="text-blue-400 border-b-2 border-blue-400"          
+        <a routerLink="/users"
+           routerLinkActive="text-blue-400 border-b-2 border-blue-400"
            class="hover:text-blue-400 transition-colors">
            Users
         </a>
       }
     }
-    
+
    <!-- Guest view: Visible only when not logged in -->
       @if (!user()) {
-        <a routerLink="/user/login" 
-           routerLinkActive="text-blue-400 border-b-2 border-blue-400" 
+        <a routerLink="/user/login"
+           routerLinkActive="text-blue-400 border-b-2 border-blue-400"
            class="hover:text-blue-400 transition-colors">
            Login
         </a>
-        <a routerLink="/user/register" 
-           routerLinkActive="text-blue-400 border-b-2 border-blue-400" 
+        <a routerLink="/user/register"
+           routerLinkActive="text-blue-400 border-b-2 border-blue-400"
            class="hover:text-blue-400 transition-colors">
            Register
         </a>

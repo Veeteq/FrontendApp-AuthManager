@@ -47,31 +47,37 @@ export class AddEdit implements OnInit {
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'] ? Number(this.route.snapshot.params['id']) : null;
 
-    this.form = this.formBuilder.group(
-      {
+    this.form = this.formBuilder.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         username: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        // Password must be at least 6 characters long, only required for new users
-        password: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
-        confirmPassword: ['', [Validators.minLength(8), ...(this.id ? [Validators.required] : [])]],
-      },
-      {
-        validators: [equalValidator('password', 'confirmPassword')],
+        email: ['', [Validators.required, Validators.email]],        
       },
     );
 
+    // Add password controls and group validator ONLY for new users
+    // Password must be at least 8 characters long
+    if (!this.id) {
+      this.form.addControl('password', this.formBuilder.control('', [Validators.required, Validators.minLength(8)]));
+      this.form.addControl('confirmPassword', this.formBuilder.control('', [Validators.required, Validators.minLength(8)]));
+      this.form.addValidators(equalValidator('password', 'confirmPassword'));
+    }
     if (this.id) {
       this.title.set('Edit User');
       this.loading.set(true);
       this.authService
         .getById(this.id)
         .pipe(first())
-        .subscribe((user) => {
-          this.form.patchValue(user);
-          this.selectedRoles.set(new Set(user.roles));
-          this.loading.set(false);
+        .subscribe({
+          next: (user) => {
+            this.form.patchValue(user);
+            this.selectedRoles.set(new Set(user.roles));
+            this.loading.set(false);
+          },
+          error: (err) => {
+            this.alertService.error(err);
+            this.loading.set(false);
+          }
         });
     }
   }
