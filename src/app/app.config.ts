@@ -6,12 +6,13 @@ import { ConfigService } from './_service/config.service';
 import { errorInterceptor } from './_service/error.interceptor';
 import { jwtInterceptor } from './_service/jwt.interceptor';
 import { routes } from './app.routes';
+import { timeoutInterceptor } from './_service/timeout.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),    
-    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor, timeoutInterceptor])),
     provideAppInitializer(() => {      
       const configService = inject(ConfigService);
       return configService.load();
