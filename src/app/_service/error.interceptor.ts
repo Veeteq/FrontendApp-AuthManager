@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { catchError, switchMap, throwError, TimeoutError } from 'rxjs';
 import { AuthService } from './auth.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -8,6 +8,13 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((err) => {
+      // 1. Handle RxJS TimeoutError specifically
+      if (err instanceof TimeoutError || err.name === 'TimeoutError') {
+        const timeoutMsg = 'Request timed out. Please check your network connection or server status.';
+        console.error('HTTP Timeout Interceptor:', err);
+        return throwError(() => timeoutMsg);
+      }
+
       // Exclude authentication endpoints from silent refresh logic
       const isAuthEndpoint = req.url.includes('/auth/login') ||
                              req.url.includes('/auth/refresh') ||
